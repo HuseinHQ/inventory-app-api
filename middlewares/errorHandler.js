@@ -1,6 +1,5 @@
 function errorHandler(err, req, res, next) {
   console.log(`[errorHandler.js]: ${JSON.stringify(err)}`);
-  console.log('err.errors[0].message', err.name);
 
   let status = 500;
   let success = false;
@@ -21,6 +20,9 @@ function errorHandler(err, req, res, next) {
   } else if (err.name === 'SequelizeUniqueConstraintError') {
     status = 409;
     message = err.errors[0].message;
+  } else if (err.name === 'JsonWebTokenError') {
+    status = 401;
+    message = 'Invalid token';
   }
 
   res.status(status).json({ success, status, message });

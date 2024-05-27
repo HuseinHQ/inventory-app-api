@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      user_id: {
+      UserId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         onDelete: 'cascade',
@@ -39,6 +39,10 @@ module.exports = {
       condition: {
         type: Sequelize.STRING,
         defaultValue: 'new',
+      },
+      isFavorite: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
       createdAt: {
         allowNull: false,

@@ -14,12 +14,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Item.init(
     {
-      user_id: {
+      UserId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: { msg: 'user_id is required' },
-          notEmpty: { msg: 'user_id is required' },
+          notNull: { msg: 'UserId is required' },
+          notEmpty: { msg: 'UserId is required' },
         },
       },
       name: {

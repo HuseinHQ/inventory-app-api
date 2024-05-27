@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      item_id: {
+      ItemId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -17,7 +17,7 @@ module.exports = {
           key: 'id',
         },
       },
-      user_id: {
+      UserId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -25,7 +25,7 @@ module.exports = {
           key: 'id',
         },
       },
-      activity_type: {
+      activityType: {
         type: Sequelize.STRING,
         allowNull: false,
       },

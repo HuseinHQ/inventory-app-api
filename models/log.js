@@ -14,32 +14,32 @@ module.exports = (sequelize, DataTypes) => {
   }
   Log.init(
     {
-      item_id: {
+      ItemId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: { msg: 'item_id is required' },
-          notEmpty: { msg: 'item_id is required' },
+          notNull: { msg: 'ItemId is required' },
+          notEmpty: { msg: 'ItemId is required' },
         },
       },
-      user_id: {
+      UserId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: { msg: 'user_id is required' },
-          notEmpty: { msg: 'user_id is required' },
+          notNull: { msg: 'UserId is required' },
+          notEmpty: { msg: 'UserId is required' },
         },
       },
-      activity_type: {
+      activityType: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
           isIn: {
             args: [['add', 'remove', 'update']],
-            msg: 'The value of activity_type must be one of ["add", "remove", "update"]',
+            msg: 'The value of activityType must be one of ["add", "remove", "update"]',
           },
-          notNull: { msg: 'activity_type is required' },
-          notEmpty: { msg: 'activity_type is required' },
+          notNull: { msg: 'activityType is required' },
+          notEmpty: { msg: 'activityType is required' },
         },
       },
       quantity: {

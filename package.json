@@ -4,8 +4,9 @@
   "main": "index.js",
   "scripts": {
     "start": "pm2 start ecosystem.config.js",
-    "database:up": "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "db:up": "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
+    "db:down": "npx sequelize-cli db:seed:undo:all && npx sequelize-cli db:migrate:undo:all"
   },
   "keywords": [],
   "author": "",

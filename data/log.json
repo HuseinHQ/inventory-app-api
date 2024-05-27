@@ -1,0 +1,23 @@
+[
+  {
+    "ItemId": 1,
+    "UserId": 1,
+    "activityType": "add",
+    "quantity": 1,
+    "notes": "Beli di toko"
+  },
+  {
+    "ItemId": 2,
+    "UserId": 1,
+    "activityType": "add",
+    "quantity": 2,
+    "notes": "Beli di toko"
+  },
+  {
+    "ItemId": 3,
+    "UserId": 1,
+    "activityType": "add",
+    "quantity": 1,
+    "notes": "Beli di toko"
+  }
+]

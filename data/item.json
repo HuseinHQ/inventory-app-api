@@ -1,20 +1,32 @@
 [
   {
-    "user_id": 1,
+    "UserId": 1,
     "name": "Pensil",
     "description": "Alat untuk menulis",
     "image": "",
     "quantity": 1,
     "location": "tepak alat tulis",
-    "condition": "new"
+    "condition": "new",
+    "isFavorite": true
   },
   {
-    "user_id": 1,
+    "UserId": 1,
     "name": "Penghapus",
     "description": "Alat untuk menghapus",
     "image": "",
+    "quantity": 2,
+    "location": "tepak alat tulis",
+    "condition": "new",
+    "isFavorite": false
+  },
+  {
+    "UserId": 1,
+    "name": "Penggaris",
+    "description": "Alat untuk menggaris",
+    "image": "",
     "quantity": 1,
     "location": "tepak alat tulis",
-    "condition": "new"
+    "condition": "old",
+    "isFavorite": false
   }
 ]
