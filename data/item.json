@@ -1,0 +1,20 @@
+[
+  {
+    "user_id": 1,
+    "name": "Pensil",
+    "description": "Alat untuk menulis",
+    "image": "",
+    "quantity": 1,
+    "location": "tepak alat tulis",
+    "condition": "new"
+  },
+  {
+    "user_id": 1,
+    "name": "Penghapus",
+    "description": "Alat untuk menghapus",
+    "image": "",
+    "quantity": 1,
+    "location": "tepak alat tulis",
+    "condition": "new"
+  }
+]
