@@ -36,9 +36,18 @@ class UserController {
       // Make a payload
       const payload = { id: findUser.dataValues.id };
       const access_token = createToken(payload);
-      console.log(access_token);
 
       res.json({ success: true, status: 200, access_token });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getUserByPk(pk, next) {
+    try {
+      const findUser = await User.findByPk(pk);
+      if (!findUser) throw { name: 'not_found' };
+      return findUser;
     } catch (err) {
       next(err);
     }

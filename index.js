@@ -15,5 +15,7 @@ app.use('/', mainRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`[index.js]: Server is running at http://localhost:${PORT}`);
+  console.log(
+    `[index.js]: Server is running at http://${require('./config/config.json')[process.env.NODE_ENV].host}:${PORT}`
+  );
 });

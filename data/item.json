@@ -5,6 +5,7 @@
     "description": "Alat untuk menulis",
     "image": "",
     "quantity": 1,
+    "category": "alat tulis",
     "location": "tepak alat tulis",
     "condition": "new",
     "isFavorite": true
@@ -15,6 +16,7 @@
     "description": "Alat untuk menghapus",
     "image": "",
     "quantity": 2,
+    "category": "alat tulis",
     "location": "tepak alat tulis",
     "condition": "new",
     "isFavorite": false
@@ -25,6 +27,7 @@
     "description": "Alat untuk menggaris",
     "image": "",
     "quantity": 1,
+    "category": "alat tulis",
     "location": "tepak alat tulis",
     "condition": "old",
     "isFavorite": false

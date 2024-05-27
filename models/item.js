@@ -38,8 +38,17 @@ module.exports = (sequelize, DataTypes) => {
           min: { args: 1, msg: 'Minimum quantity value is 1' },
         },
       },
+      category: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: { msg: 'Category is required' },
+          notEmpty: { msg: 'Category is required' },
+        },
+      },
       location: DataTypes.STRING,
       condition: DataTypes.STRING,
+      isFavorite: DataTypes.BOOLEAN,
     },
     {
       sequelize,

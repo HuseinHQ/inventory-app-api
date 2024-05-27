@@ -1,5 +1,5 @@
 function errorHandler(err, req, res, next) {
-  console.log(`[errorHandler.js]: ${JSON.stringify(err)}`);
+  console.error(`[errorHandler.js]: ${JSON.stringify(err)}`);
 
   let status = 500;
   let success = false;
@@ -23,6 +23,12 @@ function errorHandler(err, req, res, next) {
   } else if (err.name === 'JsonWebTokenError') {
     status = 401;
     message = 'Invalid token';
+  } else if (err.name === 'SequelizeConnectionRefusedError') {
+    status = 503;
+    message = 'Service Unavailable';
+  } else if (err.name === 'not_found') {
+    status = 404;
+    message = 'Error not found';
   }
 
   res.status(status).json({ success, status, message });
