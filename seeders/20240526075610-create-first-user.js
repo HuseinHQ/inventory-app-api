@@ -1,6 +1,8 @@
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
+const { hashPassword } = require('../helpers/bcrypt');
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     const user = require('../data/user.json').map((el) => {
@@ -13,9 +15,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('Users', null, {
-      truncate: true,
-      restartIdentity: true,
-    });
+    await queryInterface.bulkDelete('Users', null, {});
   },
 };
