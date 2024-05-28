@@ -5,7 +5,7 @@
     "description": "Alat untuk menulis",
     "image": "",
     "quantity": 1,
-    "category": "alat tulis",
+    "category": "Alat tulis",
     "location": "tepak alat tulis",
     "condition": "new",
     "isFavorite": true
@@ -16,7 +16,7 @@
     "description": "Alat untuk menghapus",
     "image": "",
     "quantity": 2,
-    "category": "alat tulis",
+    "category": "Alat tulis",
     "location": "tepak alat tulis",
     "condition": "new",
     "isFavorite": false
@@ -27,9 +27,31 @@
     "description": "Alat untuk menggaris",
     "image": "",
     "quantity": 1,
-    "category": "alat tulis",
+    "category": "Alat tulis",
     "location": "tepak alat tulis",
-    "condition": "old",
+    "condition": "second",
     "isFavorite": false
+  },
+  {
+    "UserId": 1,
+    "name": "Smartphone",
+    "description": "Alat untuk entertainment dan juga komunikasi jarak jauh",
+    "image": "",
+    "quantity": 5,
+    "category": "Elektronik",
+    "location": "di Lemari",
+    "condition": "new",
+    "isFavorite": false
+  },
+  {
+    "UserId": 1,
+    "name": "Macbook Pro M3",
+    "description": "Laptop untuk menunjang produktivitas, seperti video editing, coding, desain grafis, dan lainnya",
+    "image": "",
+    "quantity": 1,
+    "category": "Elektronik",
+    "location": "di toko",
+    "condition": "second",
+    "isFavorite": true
   }
 ]

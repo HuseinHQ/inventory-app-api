@@ -43,6 +43,17 @@ class UserController {
     }
   }
 
+  static async getUserDetail(req, res, next) {
+    try {
+      const UserId = req.user.id;
+      const findUser = await User.findByPk(UserId);
+      if (!findUser) throw { name: 'not_found' };
+      res.json({ success: true, status: 200, data: findUser });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async getUserByPk(pk, next) {
     try {
       const findUser = await User.findByPk(pk);

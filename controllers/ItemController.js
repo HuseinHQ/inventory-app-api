@@ -1,4 +1,4 @@
-const { Item } = require('../models/index');
+const { Item, sequelize, Log } = require('../models/index');
 const { Op } = require('sequelize');
 const LogController = require('./LogController');
 const UserController = require('./UserController');
@@ -10,11 +10,28 @@ class ItemController {
       const UserId = req.user.id;
       const where = { UserId };
       let order = [];
-      const { name, category, order_by, desc } = req.query;
+      const { name, quantity, category, condition, location, order_by, desc } = req.query;
+      const attribute = [
+        'name',
+        'quantity',
+        'category',
+        'condition',
+        'location',
+        'isFavorite',
+        'createdAt',
+        'updatedAt',
+      ];
 
       if (name) where.name = { [Op.iLike]: `%${name}%` };
       if (category) where.category = { [Op.like]: category };
-      if (order_by) order.push([order_by, desc ? 'DESC' : 'ASC']);
+      if (condition && (condition === 'new' || condition === 'second')) where.condition = { [Op.like]: condition };
+      if (location) where.location = { [Op.iLike]: `%${location}%` };
+      if (order_by) {
+        const [orderBy, direction] = order_by.split(':');
+        if (attribute.includes(orderBy)) {
+          order.push([orderBy, direction ? direction : 'ASC']);
+        }
+      }
 
       const findItems = await Item.findAll({
         where,
@@ -26,10 +43,24 @@ class ItemController {
     }
   }
 
-  static async getItemByPk(req, res, next) {
+  static async getFavoriteItems(req, res, next) {
+    try {
+      const UserId = req.user.id;
+      const findFavorites = await Item.findAll({
+        where: { UserId, isFavorite: true },
+      });
+      res.json({ success: true, status: 200, data: findFavorites });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getItemDetail(req, res, next) {
     try {
       const { id } = req.params;
-      const findItem = await Item.findByPk(id);
+      const findItem = await Item.findByPk(id, {
+        include: [Log],
+      });
       if (!findItem) throw { name: 'not_found' };
       res.json({ success: true, status: 200, data: findItem });
     } catch (err) {
@@ -58,6 +89,23 @@ class ItemController {
 
       LogController.addItem({ ItemId, UserId, quantity, notes }, next);
       res.status(201).json({ success: true, status: 201, message: 'New item successfully created' });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getCategories(req, res, next) {
+    try {
+      const UserId = req.user.id;
+      const findCategories = await Item.findAll({
+        where: {
+          UserId,
+        },
+        attributes: [[sequelize.fn('DISTINCT', sequelize.col('category')), 'category']],
+      });
+      const categories = findCategories.map((item) => item.category);
+
+      res.json({ success: true, status: 200, data: categories });
     } catch (err) {
       next(err);
     }
