@@ -4,20 +4,49 @@
     "UserId": 1,
     "activityType": "add",
     "quantity": 1,
-    "notes": "Beli di toko"
+    "notes": {
+      "en": "Item \"Pensil\" has been added to inventory on Tuesday, May 28, 2024 10:46 AM",
+      "id": "Item \"Pensil\" telah ditambahkan ke inventory pada Selasa, 28 Mei 2024 10:46 WIB"
+    }
   },
   {
     "ItemId": 2,
     "UserId": 1,
     "activityType": "add",
     "quantity": 2,
-    "notes": "Beli di toko"
+    "notes": {
+      "en": "Item \"Penghapus\" has been added to inventory on Tuesday, May 28, 2024 10:46 AM",
+      "id": "Item \"Penghapus\" telah ditambahkan ke inventory pada Selasa, 28 Mei 2024 10:46 WIB"
+    }
   },
   {
     "ItemId": 3,
     "UserId": 1,
     "activityType": "add",
     "quantity": 1,
-    "notes": "Beli di toko"
+    "notes": {
+      "en": "Item \"Penggaris\" has been added to inventory on Tuesday, May 28, 2024 10:46 AM",
+      "id": "Item \"Penggaris\" telah ditambahkan ke inventory pada Selasa, 28 Mei 2024 10:46 WIB"
+    }
+  },
+  {
+    "ItemId": 3,
+    "UserId": 1,
+    "activityType": "add",
+    "quantity": 5,
+    "notes": {
+      "en": "Item \"Smartphone\" has been added to inventory on Tuesday, May 28, 2024 10:46 AM",
+      "id": "Item \"Smartphone\" telah ditambahkan ke inventory pada Selasa, 28 Mei 2024 10:46 WIB"
+    }
+  },
+  {
+    "ItemId": 3,
+    "UserId": 1,
+    "activityType": "add",
+    "quantity": 1,
+    "notes": {
+      "en": "Item \"Macbook Pro M3\" has been added to inventory on Tuesday, May 28, 2024 10:46 AM",
+      "id": "Item \"Macbook Pro M3\" telah ditambahkan ke inventory pada Selasa, 28 Mei 2024 10:46 WIB"
+    }
   }
 ]

@@ -11,15 +11,14 @@ module.exports = {
       },
       ItemId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
           model: 'Items',
           key: 'id',
         },
+        onDelete: 'SET NULL',
       },
       UserId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
           model: 'Users',
           key: 'id',
@@ -31,10 +30,9 @@ module.exports = {
       },
       quantity: {
         type: Sequelize.INTEGER,
-        allowNull: false,
       },
       notes: {
-        type: Sequelize.STRING,
+        type: Sequelize.JSONB,
       },
       createdAt: {
         allowNull: false,

@@ -1,4 +1,4 @@
-const { Item, sequelize, Log } = require('../models/index');
+const { Item, sequelize, Log, User } = require('../models/index');
 const { Op } = require('sequelize');
 const LogController = require('./LogController');
 const UserController = require('./UserController');
@@ -82,13 +82,16 @@ class ItemController {
         condition,
       });
 
-      const findUser = await UserController.getUserByPk(UserId, next);
-      const notes = `"${name}" telah ditambahkan pada inventory dengan category "${category}" pada ${formatDate(
-        createdAt
-      )} oleh ${findUser.name}`;
+      const notesId = `Item "${name}" telah ditambahkan ke inventory pada ${formatDate(createdAt, 'id')}`;
+      const notesEn = `Item "${name}" has been added to inventory on ${formatDate(createdAt, 'en')}`;
+      const notes = { en: notesEn, id: notesId };
 
-      LogController.addItem({ ItemId, UserId, quantity, notes }, next);
-      res.status(201).json({ success: true, status: 201, message: 'New item successfully created' });
+      LogController.createLog({ ItemId, UserId, activityType: 'add', quantity, notes }, next);
+      res.status(201).json({
+        success: true,
+        status: 201,
+        message: { en: 'New item successfully added', id: 'Item baru berhasil ditambahkan' },
+      });
     } catch (err) {
       next(err);
     }
@@ -106,6 +109,58 @@ class ItemController {
       const categories = findCategories.map((item) => item.category);
 
       res.json({ success: true, status: 200, data: categories });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async patchFavorite(req, res, next) {
+    try {
+      const { id } = req.params;
+      const UserId = req.user.id;
+      const findItem = await Item.findByPk(id, { include: [User] });
+      await findItem.update({ isFavorite: !findItem.isFavorite });
+
+      const messageEn = `Item "${findItem.name}" is ${findItem.isFavorite ? 'moved to' : 'removed from'} favorite`;
+      const messageId = `Item "${findItem.name}" ${findItem.isFavorite ? 'dipindahkan ke' : 'dihapus dari'} favorit`;
+      const message = { en: messageEn, id: messageId };
+
+      const notesEn = `Item "${findItem.name}" is ${
+        findItem.isFavorite ? 'moved to' : 'removed from'
+      } favorite on ${formatDate(new Date(), 'en')}`;
+      const notesId = `Item "${findItem.name}" ${
+        findItem.isFavorite ? 'dipindah ke' : 'dihapus dari'
+      } favorit pada ${formatDate(new Date(), 'id')}`;
+      const notes = { en: notesEn, id: notesId };
+      await LogController.createLog({ ItemId: id, UserId, activityType: 'update', notes }, next);
+
+      res.json({ success: true, status: 200, message });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async deleteItem(req, res, next) {
+    try {
+      const { id } = req.params;
+      const UserId = req.user.id;
+      const findItem = await Item.findByPk(id);
+      await Item.destroy({ where: { id } });
+
+      const notesEn = `Item "${findItem.name} has been removed from inventory on ${formatDate(new Date(), 'en')}`;
+      const notesId = `Item "${findItem.name} telah dihapus dari inventory pada ${formatDate(new Date(), 'id')}`;
+      const notes = { en: notesEn, id: notesId };
+      await LogController.createLog({ UserId, activityType: 'remove', notes }, next);
+
+      console.log('SAMPEK AKHIR ADA LHO');
+      res.status(200).json({
+        success: true,
+        status: 200,
+        message: {
+          en: `Item "${findItem.name}" successfully removed from inventory`,
+          id: `Item "${findItem.name}" berhasil dihapus dari inventory`,
+        },
+      });
     } catch (err) {
       next(err);
     }

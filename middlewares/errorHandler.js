@@ -29,6 +29,9 @@ function errorHandler(err, req, res, next) {
   } else if (err.name === 'not_found') {
     status = 404;
     message = 'Error not found';
+  } else if (err.name === 'forbidden') {
+    status = 403;
+    message = 'You are not authorized to do this';
   }
 
   res.status(status).json({ success, status, message });

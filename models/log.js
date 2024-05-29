@@ -8,25 +8,31 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Log.belongsTo(models.User);
-      Log.belongsTo(models.Item);
+      Log.belongsTo(models.User, {
+        foreignKey: {
+          name: 'UserId',
+          onDelete: 'SET NULL',
+        },
+      });
+      Log.belongsTo(models.Item, {
+        foreignKey: {
+          name: 'ItemId',
+          onDelete: 'SET NULL',
+        },
+      });
     }
   }
   Log.init(
     {
       ItemId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         validate: {
-          notNull: { msg: 'ItemId is required' },
           notEmpty: { msg: 'ItemId is required' },
         },
       },
       UserId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         validate: {
-          notNull: { msg: 'UserId is required' },
           notEmpty: { msg: 'UserId is required' },
         },
       },
@@ -44,14 +50,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       quantity: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         validate: {
-          notNull: { msg: 'quantity is required' },
-          notEmpty: { msg: 'quantity is required' },
           min: { args: 1, msg: 'Minimum quantity value is 1' },
         },
       },
-      notes: DataTypes.STRING,
+      notes: DataTypes.JSONB,
     },
     {
       sequelize,

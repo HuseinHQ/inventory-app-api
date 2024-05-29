@@ -5,6 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const logs = require('../data/log.json').map((log) => {
       log.createdAt = log.updatedAt = new Date();
+      log.notes = JSON.stringify(log.notes);
       return log;
     });
 
