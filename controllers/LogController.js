@@ -12,6 +12,7 @@ class LogController {
   }
 
   static async createLog({ ItemId, UserId, activityType, quantity, notes }, next) {
+    console.log({ ItemId, UserId, activityType, quantity, notes });
     try {
       await Log.create({ ItemId, UserId, activityType, quantity, notes });
     } catch (err) {

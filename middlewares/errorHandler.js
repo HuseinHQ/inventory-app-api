@@ -32,6 +32,9 @@ function errorHandler(err, req, res, next) {
   } else if (err.name === 'forbidden') {
     status = 403;
     message = 'You are not authorized to do this';
+  } else if (err.name === 'multer_error') {
+    status = 500;
+    message = 'Multer error: Cannot upload';
   }
 
   res.status(status).json({ success, status, message });

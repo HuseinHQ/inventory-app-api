@@ -1,8 +1,8 @@
 const { Item, sequelize, Log, User } = require('../models/index');
-const { Op } = require('sequelize');
+const { Op, where } = require('sequelize');
 const LogController = require('./LogController');
-const UserController = require('./UserController');
 const formatDate = require('../helpers/formatDate');
+const fs = require('fs');
 
 class ItemController {
   static async getItems(req, res, next) {
@@ -72,6 +72,7 @@ class ItemController {
     try {
       const { name, description, quantity, category, location, condition } = req.body;
       const UserId = req.user.id;
+      const image = req.file && req.file.path;
       const { id: ItemId, createdAt } = await Item.create({
         UserId,
         name,
@@ -80,6 +81,7 @@ class ItemController {
         category,
         location,
         condition,
+        image,
       });
 
       const notesId = `Item "${name}" telah ditambahkan ke inventory pada ${formatDate(createdAt, 'id')}`;
@@ -140,19 +142,90 @@ class ItemController {
     }
   }
 
+  static async putItem(req, res, next) {
+    try {
+      const { id: UserId } = req.user;
+      const { id: ItemId } = req.params;
+      const findItem = await Item.findByPk(ItemId);
+      const { name, description, quantity, category, location, condition } = req.body;
+      const image = req.file && req.file.path;
+
+      const properties = ['name', 'description', 'quantity', 'category', 'location', 'condition', 'image'];
+
+      const edited = [];
+      properties.forEach((property) => {
+        if (image && findItem.image !== image) {
+          edited.push('image');
+        } else if (req.body[property] && findItem[property] !== req.body[property]) {
+          edited.push(property);
+        }
+      });
+
+      let notesEn = `Item "${findItem.name}" has been edited to on ${formatDate(new Date(), 'en')}`;
+      edited.forEach((property) => {
+        console.log(req.body.description);
+        notesEn += `\n${property} edited from "${findItem[property]}" to "${req.body[property]}"`;
+      });
+
+      let notesId = `Item "${findItem.name}" telah diedit pada ${formatDate(new Date(), 'id')}`;
+      edited.forEach((property) => {
+        notesId += `\n${property} diedit dari "${findItem[property]}" menjadi "${req.body[property]}"`;
+      });
+
+      const notes = { en: notesEn, id: notesId };
+
+      if (!edited.length) {
+        res.json({ success: true, status: 200, message: 'No changes were made.' });
+      }
+
+      await Item.update(
+        { name, image, description, quantity, category, location, condition, updatedAt: Date.now() },
+        {
+          where: { id: ItemId },
+        }
+      );
+      await LogController.createLog(
+        {
+          ItemId,
+          UserId,
+          activityType: 'update',
+          quantity: quantity ?? findItem.quantity,
+          notes,
+        },
+        next
+      );
+
+      res.status(200).json({
+        success: true,
+        status: 200,
+        message: {
+          en: `Item "${findItem.name}" successfully updated!`,
+          id: `Item "${findItem.name}" berhasil diupdate!`,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  }
+
   static async deleteItem(req, res, next) {
     try {
-      const { id } = req.params;
+      const { id: ItemId } = req.params;
       const UserId = req.user.id;
-      const findItem = await Item.findByPk(id);
-      await Item.destroy({ where: { id } });
+      const findItem = await Item.findByPk(ItemId);
+      await Item.destroy({ where: { id: ItemId } });
 
       const notesEn = `Item "${findItem.name} has been removed from inventory on ${formatDate(new Date(), 'en')}`;
       const notesId = `Item "${findItem.name} telah dihapus dari inventory pada ${formatDate(new Date(), 'id')}`;
       const notes = { en: notesEn, id: notesId };
-      await LogController.createLog({ UserId, activityType: 'remove', notes }, next);
 
-      console.log('SAMPEK AKHIR ADA LHO');
+      if (findItem.image) {
+        fs.unlinkSync(findItem.image);
+      }
+
+      await LogController.createLog({ ItemId, UserId, activityType: 'remove', notes }, next);
+
       res.status(200).json({
         success: true,
         status: 200,
