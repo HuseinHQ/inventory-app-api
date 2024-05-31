@@ -14,10 +14,7 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": "postgres",
-    "password": "postgres",
-    "database": "inventory_db",
-    "host": "huseinhk.me",
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres"
   }
 }
