@@ -48,7 +48,7 @@ class UserController {
       const UserId = req.user.id;
       const findUser = await User.findByPk(UserId);
       if (!findUser) throw { name: 'not_found' };
-      res.json({ success: true, status: 200, data: findUser });
+      res.json({ success: true, status: 200, data: { name: findUser.name, email: findUser.email } });
     } catch (err) {
       next(err);
     }
