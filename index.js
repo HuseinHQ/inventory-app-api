@@ -2,9 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const mainRoutes = require('./routes/index');
 const errorHandler = require('./middlewares/errorHandler');
-console.log(process.env.NODE_ENV);
 const app = express();
-const PORT = process.env.PORT;
+const { HOST, PORT, NODE_ENV } = process.env;
 const cors = require('cors');
 
 app.use(cors());
@@ -15,7 +14,5 @@ app.use('/', mainRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(
-    `[index.js]: Server is running at http://${require('./config/config.json')[process.env.NODE_ENV].host}:${PORT}`
-  );
+  console.log(`[index.js]: Server is running at ${HOST}:${PORT} - ${NODE_ENV}`);
 });

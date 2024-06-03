@@ -3,6 +3,9 @@ const { Op, where } = require('sequelize');
 const LogController = require('./LogController');
 const formatDate = require('../helpers/formatDate');
 const fs = require('fs');
+const path = require('path');
+const { HOST, PORT } = process.env;
+const imgUrl = (imgName) => `${HOST}:${PORT}/uploads/images/${imgName.split(' ').join('%20')}`;
 
 class ItemController {
   static async getItems(req, res, next) {
@@ -10,7 +13,7 @@ class ItemController {
       const UserId = req.user.id;
       const where = { UserId };
       let order = [];
-      const { name, quantity, category, condition, location, order_by, desc } = req.query;
+      const { name, category, condition, location, order_by, desc } = req.query;
       const attribute = [
         'name',
         'quantity',
@@ -37,6 +40,8 @@ class ItemController {
         where,
         order,
       });
+
+      findItems.map((item) => item.image && (item.image = imgUrl(item.image)));
       res.json({ success: true, status: 200, data: findItems });
     } catch (err) {
       next(err);
@@ -49,6 +54,8 @@ class ItemController {
       const findFavorites = await Item.findAll({
         where: { UserId, isFavorite: true },
       });
+
+      findFavorites.map((item) => item.image && (item.image = imgUrl(item.image)));
       res.json({ success: true, status: 200, data: findFavorites });
     } catch (err) {
       next(err);
@@ -62,6 +69,8 @@ class ItemController {
         include: [Log],
       });
       if (!findItem) throw { name: 'not_found' };
+
+      findItem.image = findItem.image && imgUrl(findItem.image);
       res.json({ success: true, status: 200, data: findItem });
     } catch (err) {
       next(err);
@@ -88,7 +97,7 @@ class ItemController {
       const notesEn = `Item "${name}" has been added to inventory on ${formatDate(createdAt, 'en')}`;
       const notes = { en: notesEn, id: notesId };
 
-      LogController.createLog({ ItemId, UserId, activityType: 'add', quantity, notes }, next);
+      LogController.createLog({ ItemId: +ItemId, UserId, activityType: 'add', quantity, notes }, next);
       res.status(201).json({
         success: true,
         status: 201,
@@ -134,7 +143,7 @@ class ItemController {
         findItem.isFavorite ? 'dipindah ke' : 'dihapus dari'
       } favorit pada ${formatDate(new Date(), 'id')}`;
       const notes = { en: notesEn, id: notesId };
-      await LogController.createLog({ ItemId: id, UserId, activityType: 'update', notes }, next);
+      await LogController.createLog({ ItemId: +id, UserId, activityType: 'update', notes }, next);
 
       res.json({ success: true, status: 200, message });
     } catch (err) {
@@ -148,22 +157,18 @@ class ItemController {
       const { id: ItemId } = req.params;
       const findItem = await Item.findByPk(ItemId);
       const { name, description, quantity, category, location, condition } = req.body;
-      const image = req.file && req.file.path;
 
-      const properties = ['name', 'description', 'quantity', 'category', 'location', 'condition', 'image'];
+      const properties = ['name', 'description', 'quantity', 'category', 'location', 'condition'];
 
       const edited = [];
       properties.forEach((property) => {
-        if (image && findItem.image !== image) {
-          edited.push('image');
-        } else if (req.body[property] && findItem[property] !== req.body[property]) {
+        if (req.body[property] && findItem[property] !== req.body[property]) {
           edited.push(property);
         }
       });
 
       let notesEn = `Item "${findItem.name}" has been edited to on ${formatDate(new Date(), 'en')}`;
       edited.forEach((property) => {
-        console.log(req.body.description);
         notesEn += `\n${property} edited from "${findItem[property]}" to "${req.body[property]}"`;
       });
 
@@ -175,25 +180,26 @@ class ItemController {
       const notes = { en: notesEn, id: notesId };
 
       if (!edited.length) {
-        res.json({ success: true, status: 200, message: 'No changes were made.' });
-      }
+        res.json({ success: true, status: 200, message: { en: 'No changes were made.', id: 'Tidak ada perubahan' } });
+      } else {
+        await Item.update(
+          { name, description, quantity, category, location, condition, updatedAt: Date.now() },
+          {
+            where: { id: ItemId },
+          }
+        );
 
-      await Item.update(
-        { name, image, description, quantity, category, location, condition, updatedAt: Date.now() },
-        {
-          where: { id: ItemId },
-        }
-      );
-      await LogController.createLog(
-        {
-          ItemId,
-          UserId,
-          activityType: 'update',
-          quantity: quantity ?? findItem.quantity,
-          notes,
-        },
-        next
-      );
+        await LogController.createLog(
+          {
+            ItemId: +ItemId,
+            UserId,
+            activityType: 'update',
+            quantity: quantity ?? findItem.quantity,
+            notes,
+          },
+          next
+        );
+      }
 
       res.status(200).json({
         success: true,
@@ -204,7 +210,6 @@ class ItemController {
         },
       });
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }
@@ -214,17 +219,18 @@ class ItemController {
       const { id: ItemId } = req.params;
       const UserId = req.user.id;
       const findItem = await Item.findByPk(ItemId);
+
+      if (findItem.image) {
+        const imagePath = path.join(__dirname, '..', 'uploads', 'images', findItem.image);
+        fs.unlinkSync(imagePath);
+      }
       await Item.destroy({ where: { id: ItemId } });
 
       const notesEn = `Item "${findItem.name} has been removed from inventory on ${formatDate(new Date(), 'en')}`;
       const notesId = `Item "${findItem.name} telah dihapus dari inventory pada ${formatDate(new Date(), 'id')}`;
       const notes = { en: notesEn, id: notesId };
 
-      if (findItem.image) {
-        fs.unlinkSync(findItem.image);
-      }
-
-      await LogController.createLog({ ItemId, UserId, activityType: 'remove', notes }, next);
+      await LogController.createLog({ ItemId: +ItemId, UserId, activityType: 'remove', notes }, next);
 
       res.status(200).json({
         success: true,
@@ -233,6 +239,60 @@ class ItemController {
           en: `Item "${findItem.name}" successfully removed from inventory`,
           id: `Item "${findItem.name}" berhasil dihapus dari inventory`,
         },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getImage(req, res, next) {
+    try {
+      const imageName = req.params.image;
+      // console.log(path.join(__dirname, '..', 'uploads', 'images', imageName));
+      res.status(200).sendFile(path.join(__dirname, '..', 'uploads', 'images', imageName));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async postImage(req, res, next) {
+    try {
+      const ItemId = req.params.id;
+      const UserId = req.user.id;
+      const newImage = req.file;
+      const findItem = await Item.findByPk(ItemId);
+
+      if (findItem.image) {
+        const oldImagePath = path.join('uploads/images', findItem.image);
+        if (fs.existsSync(oldImagePath)) {
+          const oldImage = fs.statSync(oldImagePath);
+
+          if (newImage.originalName === findItem.image && newImage.size === oldImage.size) {
+            return res.status(400).json({
+              success: false,
+              status: 400,
+              message: { en: 'New image is the same as the old image', id: 'Gambar baru sama dengan gambar lama' },
+            });
+          }
+        }
+      }
+
+      const newImagePath = path.join('uploads/images', newImage.originalname);
+      fs.writeFileSync(newImagePath, newImage.buffer);
+
+      // Update the item with the new image
+      findItem.image = newImage.originalname;
+      await findItem.save();
+
+      const notesEn = `Image has been added to item "${findItem.name}"`;
+      const notesId = `Gambar telah ditambahkan ke item "${findItem.name}"`;
+      const notes = { en: notesEn, id: notesId };
+      await LogController.createLog({ ItemId: +ItemId, UserId, activityType: 'add', notes }, next);
+
+      res.status(201).json({
+        success: true,
+        status: 201,
+        message: { en: 'Image uploaded successfully!', id: 'Gambar berhasil diunggah!' },
       });
     } catch (err) {
       next(err);

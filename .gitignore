@@ -1,4 +1,10 @@
 .history
 node_modules
 .env
-uploads
+
+/uploads/images/*
+!/uploads/images/iphone 15 pro max.jpg
+!/uploads/images/macbook pro m3.jpg
+!/uploads/images/penggaris.jpg
+!/uploads/images/penghapus.jpg
+!/uploads/images/pensil.jpeg
