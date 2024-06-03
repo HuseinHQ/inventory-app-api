@@ -224,13 +224,13 @@ class ItemController {
         const imagePath = path.join(__dirname, '..', 'uploads', 'images', findItem.image);
         fs.unlinkSync(imagePath);
       }
-      await Item.destroy({ where: { id: ItemId } });
 
       const notesEn = `Item "${findItem.name} has been removed from inventory on ${formatDate(new Date(), 'en')}`;
       const notesId = `Item "${findItem.name} telah dihapus dari inventory pada ${formatDate(new Date(), 'id')}`;
       const notes = { en: notesEn, id: notesId };
 
       await LogController.createLog({ ItemId: +ItemId, UserId, activityType: 'remove', notes }, next);
+      await Item.destroy({ where: { id: ItemId } });
 
       res.status(200).json({
         success: true,
