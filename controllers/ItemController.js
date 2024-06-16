@@ -163,7 +163,6 @@ class ItemController {
 
       let notesEn = `Item "${findItem.name}" has been edited to on ${formatDate(new Date(), 'en')}`;
       edited.forEach((property) => {
-        console.log(req.body.description);
         notesEn += `\n${property} edited from "${findItem[property]}" to "${req.body[property]}"`;
       });
 
@@ -204,7 +203,6 @@ class ItemController {
         },
       });
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }
