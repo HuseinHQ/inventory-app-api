@@ -261,9 +261,10 @@ class ItemController {
       const UserId = req.user.id;
       const newImage = req.file;
       const findItem = await Item.findByPk(ItemId);
+      let oldImagePath;
 
       if (findItem.image) {
-        const oldImagePath = path.join('uploads/images', findItem.image);
+        oldImagePath = path.join('uploads/images', findItem.image);
         if (fs.existsSync(oldImagePath)) {
           const oldImage = fs.statSync(oldImagePath);
 
@@ -283,6 +284,8 @@ class ItemController {
       // Update the item with the new image
       findItem.image = newImage.originalname;
       await findItem.save();
+
+      fs.unlinkSync(oldImagePath);
 
       const notesEn = `Image has been added to item "${findItem.name}"`;
       const notesId = `Gambar telah ditambahkan ke item "${findItem.name}"`;
